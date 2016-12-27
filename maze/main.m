@@ -35,29 +35,67 @@ for i=1:size
     end
 end
 
+%アニメーション化されたラインの作成
+h = animatedline('Color', 'r', 'Marker', '*');
+
 while(1)
     z1 = output(pos(n,:), w1).';
     z2 = output(z1, w2).';
     y = z2;
     
-    n = n + 1;
     if y(1) > 0
         if y(2) > 0
-            result(i) = 'f';
-            pos(n, :) = pos(n-1, :) + [0 rand() 0];
+            %前進
+            pos = pos + [0 rand() 0];
         else
-            result(i) = 'l';
-            pos(n, :) = pos(n-1, :) + [-rand() 0 0];
+            %左旋回
+            pos = pos + [-rand() 0 0];
         end
     else
         if y(2) > 0
-            result(i) = 'r';
-            pos(n, :) = pos(n-1, :) + [rand() 0 0];
+            %右旋回
+            pos = pos + [rand() 0 0];
         else
-            result(i) = 's';
+            %停止
             break;
         end
     end
+    %アニメーション
+    addpoints(h, pos(1), pos(2));
+    drawnow;
 end
 
-plot(pos(:, 1), pos(:, 2), 'r*-');
+%前進、左旋回、右旋回、停止、それぞれの領域のプロット
+figure;
+hold on;
+for i=1:30
+    for j=1:30
+        p = [i/10 j/10 -1];
+        z1 = output(p, w1).';
+        z2 = output(z1, w2).';
+        y = z2;
+        
+        if y(1) > 0
+            if y(2) > 0
+                %前進
+                plot(p(1), p(2), 'r*');
+            else
+                %左旋回
+                plot(p(1), p(2), 'b*');
+            end
+        else
+            if y(2) > 0
+                %右旋回
+                plot(p(1), p(2), 'g*');
+            else
+                %停止
+                plot(p(1), p(2), 'k*');
+            end
+        end
+    end
+    ax = gca;
+    ax.XTick = [0:1:size];
+    ax.YTick = [0:1:size];
+    ax.GridAlpha = 0.8;
+    grid on;
+end

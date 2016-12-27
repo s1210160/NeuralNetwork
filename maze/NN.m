@@ -4,6 +4,7 @@ close all;
 err = 50;
 alph = 0.1;
 n = 4;
+size = 3;
 
 %入力データ
 x = [0.5 0.5 -1; 1.5 0.5 -1; 2.5 0.5 -1;
@@ -57,39 +58,32 @@ while sum(err(:)) > 0.01
     end
 end
 
-for i=1:size(y)
-    if y(i, 1) > 0 
-        if y(i, 2) > 0
-            result(i) = 'f';
-        else 
-            result(i) = 'l';
-        end
-    else
-        if y(i, 2) > 0
-            result(i) = 'r';
-        else 
-            result(i) = 's';
-        end
-    end
-end
-
 %学習後プロット
-%{
-for i=0:10
-    for j=0:10
-        data = [i/10 j/10 -1];
-        r1 = output(data, w1).';
-        r2 = r1 * w2;
-        if r2 < 0
-            plot(i/10, j/10, 'r*');
+figure;
+hold on;
+for i=1:size*10
+    for j=1:size*10
+        p = [i/10 j/10 -1];
+        z1 = output(p, w1).';
+        z2 = output(z1, w2).';
+        y = z2;
+        
+        if y(1) > 0
+            if y(2) > 0
+                result(i) = 'f';
+                plot(p(1), p(2), 'r*');
+            else
+                result(i) = 'l';
+                plot(p(1), p(2), 'b*');
+            end
         else
-            plot(i/10, j/10, 'b*');
-        end;
-        hold on;
+            if y(2) > 0
+                result(i) = 'r';
+                plot(p(1), p(2), 'g*');
+            else
+                result(i) = 's';
+                plot(p(1), p(2), 'k*');
+            end
+        end
     end
 end
-for i=1:2
-    p2 = plot(a, (-w1(1, i) * a + w1(3, i))/w1(2, i), 'r');
-end
-legend([p1  p2], '学習前','学習後');
-%}
