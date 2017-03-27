@@ -8,7 +8,7 @@ n = 4;
 %入力データ
 x = [0 0 -1; 0 1 -1; 1 0 -1; 1 1 -1];
 %教師データ
-d = [-1 1 1 -1];
+d = [-1; 1; 1; -1];
 %シナプス結合荷重の初期化
 w1 = [rand() rand() rand(); rand() rand() rand(); rand() rand() rand()];
 w2 = [rand(); rand(); rand()];
@@ -38,15 +38,15 @@ while sum(err) > 0.001
     z1 = output(x, w1).';
     %[出力層] 出力
     z2 = output(z1, w2).';
-    y = z2.'
+    y = z2;
     %二乗誤差
     err = 1/2 * (d - y).^2;
     %[出力層] シナプス結合荷重の更新
     delta2 = (d - y) .* (1 - y.^2) / 2;
-    w2 = w2 + (alph * delta2 * z1).';
+    w2 = w2 + (alph * delta2.' * z1).';
     %[中間層]　シナプス結合荷重の更新
     for i=1:3
-    delta1(i, :) = (delta2 * w2(i)) .* ((1 - z1(:, i).^2)/2).';
+    delta1(i, :) = (delta2 * w2(i)) .* (1 - z1(:, i).^2)/2;
     w1(:,i) = w1(:,i) + (alph * delta1(i, :) * x).';
     end
 end
